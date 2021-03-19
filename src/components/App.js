@@ -1,7 +1,9 @@
 import React, { Component } from "react";
-import axios from "axios";
+
+import imagesApi from "../services/imagesApi";
 
 import Searchbar from "./Searchbar";
+import ImageGallery from "./ImageGallery";
 
 import "./App.css";
 
@@ -29,29 +31,37 @@ class App extends Component {
   };
 
   fetchImages = () => {
-    axios
-      .get(
-        `https://pixabay.com/api/?key=19947023-b7017f4974f73f87e742a194c&q=${this.state.searchQuery}&per_page=6&page=${this.state.currentPage}`
-      )
-      .then((response) => {
+    const { searchQuery, currentPage } = this.state;
+
+    const options = {
+      searchQuery,
+      currentPage,
+    };
+
+    imagesApi
+      .fetchImages(options)
+      .then((images) => {
         this.setState((prevState) => ({
-          hits: [...prevState.hits, ...response.data.hits],
+          hits: [...prevState.hits, ...images],
           currentPage: prevState.currentPage + 1,
         }));
-      });
+      })
+      .catch((error) => console.log(error));
   };
 
   render() {
+    const { hits } = this.state;
     return (
       <div className="App">
         <Searchbar onSubmit={this.onSubmitSearchbar} />
-        <ul>
+        <ImageGallery images={hits} />
+        {/* <ul>
           {this.state.hits.map((hit) => (
             <li key={hit.id}>
               <img src={hit.webformatURL} alt={hit.tags} width="40" />
             </li>
           ))}
-        </ul>
+        </ul> */}
         <button type="button" onClick={this.fetchImages}>
           Load More
         </button>
