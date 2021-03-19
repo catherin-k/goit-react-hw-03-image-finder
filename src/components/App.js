@@ -4,6 +4,7 @@ import imagesApi from "../services/imagesApi";
 
 import Searchbar from "./Searchbar";
 import ImageGallery from "./ImageGallery";
+import Button from "./Button";
 
 import "./App.css";
 
@@ -55,10 +56,9 @@ class App extends Component {
       <div className="App">
         <Searchbar onSubmit={this.onSubmitSearchbar} />
         <ImageGallery images={hits} />
-
-        <button type="button" onClick={this.fetchImages}>
-          Load More
-        </button>
+        {hits.length > 0 && (
+          <Button onClick={this.fetchImages} text="Load More" />
+        )}
       </div>
     );
   }
