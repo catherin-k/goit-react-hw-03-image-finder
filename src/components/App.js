@@ -55,13 +55,7 @@ class App extends Component {
       <div className="App">
         <Searchbar onSubmit={this.onSubmitSearchbar} />
         <ImageGallery images={hits} />
-        {/* <ul>
-          {this.state.hits.map((hit) => (
-            <li key={hit.id}>
-              <img src={hit.webformatURL} alt={hit.tags} width="40" />
-            </li>
-          ))}
-        </ul> */}
+
         <button type="button" onClick={this.fetchImages}>
           Load More
         </button>
