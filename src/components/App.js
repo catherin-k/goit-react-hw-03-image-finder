@@ -5,16 +5,18 @@ import imagesApi from "../services/imagesApi";
 import Searchbar from "./Searchbar";
 import ImageGallery from "./ImageGallery";
 import Button from "./Button";
+import Modal from "./Modal";
 
 import "./App.css";
-
-// 19947023-b7017f4974f73f87e742a194c
 
 class App extends Component {
   state = {
     hits: [],
     currentPage: 1,
     searchQuery: "",
+    showModal: false,
+    modalImage: null,
+    isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -39,6 +41,8 @@ class App extends Component {
       currentPage,
     };
 
+    this.setState({ isLoading: true });
+
     imagesApi
       .fetchImages(options)
       .then((images) => {
@@ -46,18 +50,48 @@ class App extends Component {
           hits: [...prevState.hits, ...images],
           currentPage: prevState.currentPage + 1,
         }));
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: "smooth",
+        });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error))
+      .finally(() => this.setState({ isLoading: false }));
+  };
+
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({
+      showModal: !showModal,
+    }));
+  };
+
+  getImage = (modalImage) => {
+    this.toggleModal();
+    this.setState({ modalImage });
   };
 
   render() {
-    const { hits } = this.state;
+    const { hits, showModal, modalImage, isLoading } = this.state;
     return (
       <div className="App">
         <Searchbar onSubmit={this.onSubmitSearchbar} />
-        <ImageGallery images={hits} />
-        {hits.length > 0 && (
+
+        <ImageGallery
+          images={hits}
+          openModal={this.toggleModal}
+          getImage={this.getImage}
+        />
+
+        {isLoading && <h1>Loading...</h1>}
+
+        {hits.length > 0 && !isLoading && (
           <Button onClick={this.fetchImages} text="Load More" />
+        )}
+
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <img src={modalImage} alt="" />
+          </Modal>
         )}
       </div>
     );
