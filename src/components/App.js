@@ -6,6 +6,7 @@ import Searchbar from "./Searchbar";
 import ImageGallery from "./ImageGallery";
 import Button from "./Button";
 import Modal from "./Modal";
+import Loader from "react-loader-spinner";
 
 import "./App.css";
 
@@ -82,7 +83,15 @@ class App extends Component {
           getImage={this.getImage}
         />
 
-        {isLoading && <h1>Loading...</h1>}
+        {isLoading && (
+          <Loader
+            className="Loader"
+            type="Oval"
+            color="#00BFFF"
+            height={80}
+            width={80}
+          />
+        )}
 
         {hits.length > 0 && !isLoading && (
           <Button onClick={this.fetchImages} text="Load More" />
